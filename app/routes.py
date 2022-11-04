@@ -7,20 +7,23 @@ tasks_bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
 
 @tasks_bp.route("", methods=["POST"])
 def create_task():
+    response = request.get("http://127.0.0.1:5000/tasks")
     request_body = request.get_json()
     new_task = Task(title=request_body["title"],
     description=request_body["description"],
     completed_at=request_body["completed_at"],
     is_complete = request_body["is_complete"])
 
-    if not new_task.completed_at:
+    if new_task.completed_at == "null":
         new_task.is_complete = False
-        new_task.completed_at = None
+        # new_task.completed_at = None
 
     db.session.add(new_task)
     db.session.commit()
+    
 
-    return make_response(f"Task {new_task.title} successfully created", 201)
+    # return response.status_code, response.status_message, make_response(jsonify(new_task.to_dict), 201)
+    return make_response(jsonify(new_task.to_dict), 201)
 
 @tasks_bp.route("", methods=["GET"])
 def get_tasks():
