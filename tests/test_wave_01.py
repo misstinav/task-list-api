@@ -1,5 +1,6 @@
 from app.models.task import Task
 import pytest
+import time
 
 
 #@pytest.mark.skip(reason="No way to test this feature yet")
@@ -67,7 +68,7 @@ def test_get_task_not_found(client):
     # *****************************************************************
 
 
-@pytest.mark.skip(reason="No way to test this feature yet")
+#@pytest.mark.skip(reason="No way to test this feature yet")
 def test_create_task(client):
     # Act
     response = client.post("/tasks", json={
@@ -87,11 +88,14 @@ def test_create_task(client):
             "is_complete": False
         }
     }
+    
     new_task = Task.query.get(1)
     assert new_task
     assert new_task.title == "A Brand New Task"
     assert new_task.description == "Test Description"
     assert new_task.completed_at == None
+    # time.sleep(60)
+
 
 
 @pytest.mark.skip(reason="No way to test this feature yet")
