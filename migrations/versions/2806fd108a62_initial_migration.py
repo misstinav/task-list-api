@@ -1,8 +1,8 @@
-"""adds Task model
+"""initial migration
 
-Revision ID: c06ef944bb01
+Revision ID: 2806fd108a62
 Revises: 
-Create Date: 2022-11-04 13:29:20.481353
+Create Date: 2022-11-05 18:32:34.643941
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c06ef944bb01'
+revision = '2806fd108a62'
 down_revision = None
 branch_labels = None
 depends_on = None

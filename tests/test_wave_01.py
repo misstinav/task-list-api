@@ -1,5 +1,6 @@
 from app.models.task import Task
 import pytest
+import time
 
 
 #@pytest.mark.skip(reason="No way to test this feature yet")
@@ -32,7 +33,7 @@ def test_get_tasks_one_saved_tasks(client, one_task):
     ]
 
 
-@pytest.mark.skip(reason="No way to test this feature yet")
+#@pytest.mark.skip(reason="No way to test this feature yet")
 def test_get_task(client, one_task):
     # Act
     response = client.get("/tasks/1")
@@ -51,7 +52,7 @@ def test_get_task(client, one_task):
     }
 
 
-@pytest.mark.skip(reason="No way to test this feature yet")
+#@pytest.mark.skip(reason="No way to test this feature yet")
 def test_get_task_not_found(client):
     # Act
     response = client.get("/tasks/1")
@@ -59,8 +60,9 @@ def test_get_task_not_found(client):
 
     # Assert
     assert response.status_code == 404
+    assert response_body == {"message": "id number not found"}
 
-    raise Exception("Complete test with assertion about response body")
+    #raise Exception("Complete test with assertion about response body")
     # *****************************************************************
     # **Complete test with assertion about response body***************
     # *****************************************************************
@@ -86,11 +88,14 @@ def test_create_task(client):
             "is_complete": False
         }
     }
+    
     new_task = Task.query.get(1)
     assert new_task
     assert new_task.title == "A Brand New Task"
     assert new_task.description == "Test Description"
     assert new_task.completed_at == None
+    # time.sleep(60)
+
 
 
 @pytest.mark.skip(reason="No way to test this feature yet")

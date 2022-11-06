@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, make_response, abort
+from flask import Blueprint, jsonify, request, make_response, abort, abort
 from app.models.task import Task
 from app import db
 
@@ -7,23 +7,17 @@ tasks_bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
 
 @tasks_bp.route("", methods=["POST"])
 def create_task():
-    response = request.get("http://127.0.0.1:5000/tasks")
     request_body = request.get_json()
-    new_task = Task(title=request_body["title"],
-    description=request_body["description"],
-    completed_at=request_body["completed_at"],
-    is_complete = request_body["is_complete"])
-
-    if new_task.completed_at == "null":
-        new_task.is_complete = False
-        # new_task.completed_at = None
+    new_task = Task(
+        title=request_body["title"],
+        description=request_body["description"]
+        )
 
     db.session.add(new_task)
     db.session.commit()
     
+    return make_response(new_task.to_dict(), 201)
 
-    # return response.status_code, response.status_message, make_response(jsonify(new_task.to_dict), 201)
-    return make_response(jsonify(new_task.to_dict), 201)
 
 @tasks_bp.route("", methods=["GET"])
 def get_tasks():
@@ -34,25 +28,35 @@ def get_tasks():
             "id":task.id,
             "title": task.title,
             "description": task.description,
-            "is_complete": task.is_complete
+            "is_complete": bool(task.is_complete)
         })
     return jsonify(tasks_response)
 
-'''
-Added in please check over: Goal Update & Delete for Wave 1
-'''
+@tasks_bp.route("/<task_id>", methods=["GET"])
+def get_one_task(task_id):
+    task = validate_task(task_id)
+
+    return {
+        "task": {
+            "id" : task.id,
+            "title": task.title,
+            "description" : task.description,
+            "is_complete": bool(task.is_complete)
+        }
+    }
+
 def validate_task(task_id):
-    tasks = Task.query.all()
     try:
         task_id = int(task_id)
     except: 
         abort(make_response({"message":f"task {task_id} invalid"}, 400))
 
-    for task in tasks:
-        if task.id == task_id:
-            return task_id
+    task = Task.query.get(task_id)
+    if not task:
+        abort(make_response({"message": "id number not found"}, 404))
     
-    abort(make_response({"message": f"task {task_id} not found"}, 404))
+    return task
+    
 
 
 @tasks_bp.route("/<task_id>", methods=["PUT"])
@@ -79,5 +83,4 @@ def delete_task(task_id):
 
     return make_response(f"Task #{task_id} successfully deleted")
 
-    
     
