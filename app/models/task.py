@@ -11,11 +11,11 @@ class Task(db.Model):
 
 
     def to_dict(self):
-        task_as_dict = {"task": {}}
+        task_as_dict = {}
         # task_as_dict["id"] = self.id
-        task_as_dict["task"]["title"] = self.title
-        task_as_dict["task"]["description"] = self.description
-        task_as_dict["task"]["is_complete"] = self.is_complete
+        task_as_dict["title"] = self.title
+        task_as_dict["description"] = self.description
+        task_as_dict["is_complete"] = self.is_complete
         
-
-        return json.dumps(task_as_dict)
+        nested_dict = {"task": task_as_dict}
+        return json.dump({"task": task_as_dict})
