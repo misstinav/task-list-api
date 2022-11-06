@@ -15,7 +15,7 @@ def create_task():
     db.session.add(new_task)
     db.session.commit()
     
-    return make_response((new_task.to_dict()), 201)
+    return make_response(new_task.to_dict(), 201)
 
 
 @tasks_bp.route("", methods=["GET"])
@@ -27,34 +27,41 @@ def get_tasks():
             "id":task.id,
             "title": task.title,
             "description": task.description,
+            "is_complete": task.is_complete
         })
-    return jsonify(tasks_response)
-    
-@tasks_bp.route("/<task_id>", methods=["GET"])
-def get_one_task(task_id):
-    try:
-        task_id = int(task_id)
-    except:
-        return {"message": "Please search with a valid number"}, 400
-    
-    
-    # task_response = []
-    task = Task.query.get(task_id)
+        # if task.is_complete == None:
 
-    # for task in tasks:
-    #     if task.id == task_id:
-    #         task_response.append({
-    #             "id": task.id,
-    #             "title": task.title,
-    #             "description": task.description,
-    #             "is_complete": task.is_complete
-    #         })
-            # if task.completed_at == "null":
-            #     task_response.append({"is_complete" = False})
-    return {
-        "id": task.id,
-        "title": task.title,
-        "description": task.description,
-        "is_complete": task.is_complete,
-        "completed_at": task.completed_at
-    }
+    return jsonify(tasks_response)
+
+
+
+
+    
+# @tasks_bp.route("/<task_id>", methods=["GET"])
+# def get_one_task(task_id):
+#     try:
+#         task_id = int(task_id)
+#     except:
+#         return {"message": "Please search with a valid number"}, 400
+    
+    
+#     task_response = []
+#     tasks = Task.query.all()
+
+#     for task in tasks:
+#         if task.id == task_id:
+#             task_response.append({
+#                 "id": task.id,
+#                 "title": task.title,
+#                 "description": task.description,
+#                 "is_complete": task.is_complete
+#             })
+#             # if task.completed_at == None:
+#             #     task_response.append({"is_complete" : False})
+#     return jsonify(task_response)
+#         # "id": task.id,
+#         # "title": task.title,
+#         # "description": task.description,
+#         # "is_complete": task.is_complete,
+#         # "completed_at": task.completed_at
+#     # }
