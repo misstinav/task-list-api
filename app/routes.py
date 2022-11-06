@@ -7,23 +7,16 @@ tasks_bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
 
 @tasks_bp.route("", methods=["POST"])
 def create_task():
-    response = request.get("http://127.0.0.1:5000/tasks")
+
     request_body = request.get_json()
     new_task = Task(title=request_body["title"],
-    description=request_body["description"],
-    completed_at=request_body["completed_at"],
-    is_complete = request_body["is_complete"])
-
-    if new_task.completed_at == "null":
-        new_task.is_complete = False
-        # new_task.completed_at = None
+    description=request_body["description"])
 
     db.session.add(new_task)
     db.session.commit()
     
+    return make_response((new_task.to_dict()), 201)
 
-    # return response.status_code, response.status_message, make_response(jsonify(new_task.to_dict), 201)
-    return make_response(jsonify(new_task.to_dict), 201)
 
 @tasks_bp.route("", methods=["GET"])
 def get_tasks():
@@ -34,6 +27,34 @@ def get_tasks():
             "id":task.id,
             "title": task.title,
             "description": task.description,
-            "is_complete": task.is_complete
         })
     return jsonify(tasks_response)
+    
+@tasks_bp.route("/<task_id>", methods=["GET"])
+def get_one_task(task_id):
+    try:
+        task_id = int(task_id)
+    except:
+        return {"message": "Please search with a valid number"}, 400
+    
+    
+    # task_response = []
+    task = Task.query.get(task_id)
+
+    # for task in tasks:
+    #     if task.id == task_id:
+    #         task_response.append({
+    #             "id": task.id,
+    #             "title": task.title,
+    #             "description": task.description,
+    #             "is_complete": task.is_complete
+    #         })
+            # if task.completed_at == "null":
+            #     task_response.append({"is_complete" = False})
+    return {
+        "id": task.id,
+        "title": task.title,
+        "description": task.description,
+        "is_complete": task.is_complete,
+        "completed_at": task.completed_at
+    }
