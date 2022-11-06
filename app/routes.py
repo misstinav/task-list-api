@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, make_response
+from flask import Blueprint, jsonify, request, make_response, abort
 from app.models.task import Task
 from app import db
 
@@ -27,41 +27,31 @@ def get_tasks():
             "id":task.id,
             "title": task.title,
             "description": task.description,
-            "is_complete": task.is_complete
+            "is_complete": bool(task.is_complete)
         })
-        # if task.is_complete == None:
-
     return jsonify(tasks_response)
 
+@tasks_bp.route("/<task_id>", methods=["GET"])
+def get_one_task(task_id):
+    task = validate_search(task_id)
 
+    return {
+        "task": {
+            "id" : task.id,
+            "title": task.title,
+            "description" : task.description,
+            "is_complete": bool(task.is_complete)
+        }
+    }
 
-
+def validate_search(task_id):
+    try:
+        task_id = int(task_id)
+    except:
+        abort(make_response({"message": "Please enter an identifying number"}, 400))
     
-# @tasks_bp.route("/<task_id>", methods=["GET"])
-# def get_one_task(task_id):
-#     try:
-#         task_id = int(task_id)
-#     except:
-#         return {"message": "Please search with a valid number"}, 400
-    
-    
-#     task_response = []
-#     tasks = Task.query.all()
+    task = Task.query.get(task_id)
+    if not task:
+        abort(make_response({"message": "id number not found"}, 404))
 
-#     for task in tasks:
-#         if task.id == task_id:
-#             task_response.append({
-#                 "id": task.id,
-#                 "title": task.title,
-#                 "description": task.description,
-#                 "is_complete": task.is_complete
-#             })
-#             # if task.completed_at == None:
-#             #     task_response.append({"is_complete" : False})
-#     return jsonify(task_response)
-#         # "id": task.id,
-#         # "title": task.title,
-#         # "description": task.description,
-#         # "is_complete": task.is_complete,
-#         # "completed_at": task.completed_at
-#     # }
+    return task

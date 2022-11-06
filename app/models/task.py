@@ -11,9 +11,8 @@ class Task(db.Model):
 
     def to_dict(self):
         task_as_dict = {}
-        task_as_dict["id"] = self.id,
-        task_as_dict["title"] = self.title,
-        if self.completed_at == None:
-            task_as_dict["is_complete"] = False
+        task_as_dict["id"] = self.id
+        task_as_dict["title"] = self.title
+        task_as_dict["is_complete"] = bool(self.is_complete)
 
         return json.dumps(task_as_dict)
