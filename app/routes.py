@@ -52,7 +52,6 @@ def validate_task(task_id):
         task_id = int(task_id)
     except: 
         abort(make_response({"message":f"task {task_id} invalid"}, 400))
-
     task = Task.query.get(task_id)
     if not task:
         abort(make_response({"message": "id number not found"}, 404))
@@ -64,8 +63,6 @@ def validate_task(task_id):
 @tasks_bp.route("/<task_id>", methods=["PUT"])
 def update_task(task_id):
     task = validate_task(task_id)
-    
-    
     request_body = request.get_json()
 
     task.title = request_body["title"]
@@ -73,7 +70,7 @@ def update_task(task_id):
 
     db.session.commit()
 
-    return make_response(f"Task # {task.id} successfully updated", 200)
+    return make_response(jsonify(task.to_dict()), 200)
 
 
 @tasks_bp.route("/<task_id>", methods=["DELETE"])
@@ -83,6 +80,5 @@ def delete_task(task_id):
     db.session.delete(task)
     db.session.commit()
 
-    return make_response(f"Task #{task_id} successfully deleted")
-
+    # return make_response(jsonify(f"details: Task {task_id} {task.title} successfully deleted"))
     
