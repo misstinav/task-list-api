@@ -11,12 +11,14 @@ def create_task():
     new_task = Task(
         title=request_body["title"],
         description=request_body["description"]
+        # id=request_body["id"],
+        # is_complete=request_body["is_complete"]
         )
 
     db.session.add(new_task)
     db.session.commit()
     
-    return make_response(new_task.to_dict(), 201)
+    return make_response(jsonify(new_task.to_dict()), 201)
 
 
 @tasks_bp.route("", methods=["GET"])
