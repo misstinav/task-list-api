@@ -1,6 +1,5 @@
 from app import db
 import json
-# from serpy import Serializer, IntField, StrField, MethodField, BoolField
 
 
 class Task(db.Model):
@@ -18,15 +17,4 @@ class Task(db.Model):
         task_as_dict["is_complete"] = bool(self.is_complete)
         
         nested_dict = {"task": task_as_dict}
-        return json.dumps(nested_dict)
-
-# class TaskSerializer(Serializer):
-#     id = IntField(required=True)
-#     title = StrField(required=True)
-#     description = StrField(required=True)
-#     completed_at = MethodField('serializable_completed_at')
-#     is_complete = BoolField(required=True)
-
-#     def serialized_completed_at(self, task):
-#         return task.completed_at.isoformat()
-    
+        return nested_dict

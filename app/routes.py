@@ -17,14 +17,23 @@ def create_task():
 
     db.session.add(new_task)
     db.session.commit()
-    
+
     return make_response(jsonify(new_task.to_dict()), 201)
 
 
 @tasks_bp.route("", methods=["GET"])
 def get_tasks():
-    tasks = Task.query.all()
     tasks_response = []
+    # task_query = Task.query
+    sort_query = request.args.get("sort")
+
+    if sort_query:
+        ###working through descending order###
+        # if sort_query == 'desc':
+        #     tasks = Task.query.order_by(Task.-'title').all()
+        tasks = Task.query.order_by(Task.title).all()
+    else:
+        tasks = Task.query.all()
     for task in tasks:
         tasks_response.append({
             "id":task.id,
@@ -32,6 +41,11 @@ def get_tasks():
             "description": task.description,
             "is_complete": bool(task.is_complete)
         })
+
+    # if sort_query:
+    #     if sort_query == "asc":
+    #         tasks_response = tasks_response.sort(key="title", reverse=False)
+
     return jsonify(tasks_response)
 
 @tasks_bp.route("/<task_id>", methods=["GET"])
