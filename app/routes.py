@@ -8,11 +8,18 @@ tasks_bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
 @tasks_bp.route("", methods=["POST"])
 def create_task():
     request_body = request.get_json()
+    try:
+        request_body["title"]
+    except:
+        abort(make_response({"details":"Invalid data"}, 400))
+    try:
+        request_body["description"]
+    except:
+        abort(make_response({"details":"Invalid data"}, 400))
+
     new_task = Task(
         title=request_body["title"],
         description=request_body["description"]
-        # id=request_body["id"],
-        # is_complete=request_body["is_complete"]
         )
 
     db.session.add(new_task)
@@ -24,16 +31,16 @@ def create_task():
 @tasks_bp.route("", methods=["GET"])
 def get_tasks():
     tasks_response = []
-    # task_query = Task.query
     sort_query = request.args.get("sort")
 
-    if sort_query:
-        ###working through descending order###
+    # if sort_query:
         # if sort_query == 'desc':
-        #     tasks = Task.query.order_by(Task.-'title').all()
-        tasks = Task.query.order_by(Task.title).all()
-    else:
-        tasks = Task.query.all()
+        #     tasks = Task.query.order_by(Task.title).reverse()
+        # else:
+        #     tasks = Task.query.order_by(Task.title).all()
+    # else:
+    tasks = Task.query.all()
+
     for task in tasks:
         tasks_response.append({
             "id":task.id,
