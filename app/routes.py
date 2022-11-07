@@ -33,13 +33,13 @@ def get_tasks():
     tasks_response = []
     sort_query = request.args.get("sort")
 
-    # if sort_query:
-        # if sort_query == 'desc':
-        #     tasks = Task.query.order_by(Task.title).reverse()
-        # else:
-        #     tasks = Task.query.order_by(Task.title).all()
-    # else:
-    tasks = Task.query.all()
+    if sort_query:
+        if sort_query == 'desc':
+            tasks = Task.query.order_by(Task.title.desc())
+        else:
+            tasks = Task.query.order_by(Task.title).all()
+    else:
+        tasks = Task.query.all()
 
     for task in tasks:
         tasks_response.append({
@@ -48,10 +48,6 @@ def get_tasks():
             "description": task.description,
             "is_complete": bool(task.is_complete)
         })
-
-    # if sort_query:
-    #     if sort_query == "asc":
-    #         tasks_response = tasks_response.sort(key="title", reverse=False)
 
     return jsonify(tasks_response)
 
