@@ -1,5 +1,6 @@
 from app import db
-import json
+from datetime import date
+
 
 
 class Task(db.Model):
@@ -18,3 +19,10 @@ class Task(db.Model):
         
         nested_dict = {"task": task_as_dict}
         return nested_dict
+
+    def mark_complete(self):
+        today = date.today()
+        self.completed_at = today
+
+        if self.completed_at:
+            self.is_complete = True

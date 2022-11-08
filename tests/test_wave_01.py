@@ -1,6 +1,5 @@
 from app.models.task import Task
 import pytest
-import time
 
 
 #@pytest.mark.skip(reason="No way to test this feature yet")
