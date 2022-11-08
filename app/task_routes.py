@@ -105,9 +105,20 @@ def delete_task(task_id):
 
 @tasks_bp.route("/<task_id>/mark_complete", methods=["PATCH"])
 def mark_complete_on_incomplete_task(task_id):
-    task = Task.query.get(task_id)
+    task = validate_task(task_id)
 
     task.mark_complete()
     db.session.commit()
 
     return make_response(jsonify(task.to_dict()), 200)
+
+@tasks_bp.route("/<task_id>/mark_incomplete", methods=["PATCH"])
+def mark_incomplete_oncomplete_task(task_id):
+    task = validate_task(task_id)
+
+    task.mark_incomplete()
+    db.session.commit()
+
+    return make_response(jsonify(task.to_dict()), 200)
+
+
