@@ -1,5 +1,5 @@
 from app import db
-import json
+
 
 
 class Task(db.Model):
