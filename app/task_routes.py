@@ -33,13 +33,13 @@ def get_tasks():
     tasks_response = []
     sort_query = request.args.get("sort")
 
-    # if sort_query:
-        # if sort_query == 'desc':
-        #     tasks = Task.query.order_by(Task.title).reverse()
-        # else:
-        #     tasks = Task.query.order_by(Task.title).all()
-    # else:
-    tasks = Task.query.all()
+    if sort_query:
+        if sort_query == 'desc':
+            tasks = Task.query.order_by(Task.title.desc())
+        else:
+            tasks = Task.query.order_by(Task.title).all()
+    else:
+        tasks = Task.query.all()
 
     for task in tasks:
         tasks_response.append({
@@ -48,10 +48,6 @@ def get_tasks():
             "description": task.description,
             "is_complete": bool(task.is_complete)
         })
-
-    # if sort_query:
-    #     if sort_query == "asc":
-    #         tasks_response = tasks_response.sort(key="title", reverse=False)
 
     return jsonify(tasks_response)
 
@@ -101,7 +97,6 @@ def delete_task(task_id):
     db.session.delete(task)
     db.session.commit()
 
-    test_set = {"details: " f'Task {task_id} "{task.title}" successfully deleted'}
-    json.dumps(list(test_set))
-    return make_response(jsonify({"details: " f'Task {task_id} "{task.title}" successfully deleted'}))
-    
+    return {
+        "details": f'Task {task.id} "{task.title}" successfully deleted'
+    }
