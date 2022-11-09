@@ -1,8 +1,8 @@
-"""updated tasks and goal relationship
+"""empty message
 
-Revision ID: 091c9c03a91f
+Revision ID: 8e28525eef33
 Revises: 
-Create Date: 2022-11-09 08:03:50.665759
+Create Date: 2022-11-09 08:37:15.939250
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '091c9c03a91f'
+revision = '8e28525eef33'
 down_revision = None
 branch_labels = None
 depends_on = None

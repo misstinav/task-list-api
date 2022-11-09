@@ -103,7 +103,7 @@ def delete_goal(id):
         "details": f'Goal {goal.id} "{goal.title}" successfully deleted'
     }
 
-@goals_bp.route("/goals/<goal_id>/tasks", methods=["POST"])
+@goals_bp.route("/<goal_id>/tasks", methods=["POST"])
 def create_task_for_goal(goal_id):
     goal = validate_goal(goal_id)
     tasks_ids_response = []
@@ -111,7 +111,10 @@ def create_task_for_goal(goal_id):
     for id in goal.tasks:
         tasks_ids_response.append(goal.tasks.id)
 
-    return jsonify(tasks_ids_response)
+    return jsonify({
+        "id": goal.id,
+        "task_ids": tasks_ids_response
+        })
 
 
 
