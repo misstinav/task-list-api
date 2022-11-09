@@ -26,3 +26,7 @@ class Task(db.Model):
 
         if self.completed_at:
             self.is_complete = True
+
+    def mark_incomplete(self):
+        self.completed_at = None
+        self.is_complete = False
