@@ -6,55 +6,57 @@ from app import db
 goals_bp = Blueprint("goals_bp", __name__, url_prefix="/goals")
 
 
-@goals_bp.route("/<goal_id>", methods = ["GET"])
-def get_all_goals(goal_id):
-    goal = validate_goal(goal_id)
+@goals_bp.route("/<id>", methods = ["GET"])
+def get_all_goals(id):
+    goal = validate_goal(id)
 
     return jsonify({"goal": {
-        "id": goal.goal_id,
+        "id": goal.id,
         "title": goal.title
     }}), 200
 
 
-# @goals_bp.route("", methods=["POST"])
-# def create_goal():
-#     request_body = request.get_json()
-
-#     # guard clause
-#     if "title" not in request_body:
-#         return {"details": "Invalid data"}, 400
-#     new_goal= Goal(
-#         title=request_body['title']
-#        )
-    
-#     db.session.add(new_goal)
-#     db.session.commit()
-    
-#     return make_response(jsonify(new_goal.g_json()), 201)
-    
-    # return make_response(jsonify({'goal': new_goal.to_dict()}), 201)
-
-
+@goals_bp.route("", methods=["POST"])
 def create_goal():
     request_body = request.get_json()
-    try:
-        request_body["title"]
-    except:
-        abort(make_response({"details":"Invalid data"}, 400))
-    try:
-        request_body["description"]
-    except:
-        abort(make_response({"details":"Invalid data"}, 400))
 
+    # guard clause
+    if "title" not in request_body:
+        return {"details": "Invalid data"}, 400
     new_goal = Goal(
-        title=request_body["title"],
-        description=request_body["description"]
-        )
-
+        title=request_body['title']
+       )
+    
     db.session.add(new_goal)
     db.session.commit()
+    
+    return make_response(jsonify({'goal': new_goal.g_json()}), 201)
 
-    return make_response(jsonify(new_goal.g_jason()), 201)
+    # return make_response(jsonify(new_goal.g_json()), 201)
+    
+    # return make_response(jsonify({'goal': new_goal.g_jason()}), 201)
+
+
+# def create_goal():
+#     request_body = request.get_json()
+#     try:
+#         request_body["title"]
+#     except:
+#         abort(make_response({"details":"Invalid data"}, 400))
+#     try:
+#         request_body["description"]
+#     except:
+#         abort(make_response({"details":"Invalid data"}, 400))
+
+#     new_goal = Goal(
+#         title=request_body["title"],
+#         description=request_body["description"]
+#         )
+
+#     db.session.add(new_goal)
+#     db.session.commit()
+
+#     return make_response(jsonify(new_goal.g_jason()), 201)
 
 
 @goals_bp.route("", methods=["GET"])
@@ -72,61 +74,61 @@ def get_goals():
 
     for goal in goals:
         goals_response.append({
-            "id":goal.goal_id,
+            "id":goal.id,
             "title": goal.title,
         })
 
     return jsonify(goals_response)
 
-@goals_bp.route("/<goal_id>", methods=["GET"])
-def get_one_goal(goal_id):
-    goal = validate_goal(goal_id)
+@goals_bp.route("/<id>", methods=["GET"])
+def get_one_goal(id):
+    goal = validate_goal(id)
 
     return jsonify({
         "goal": {
-            "id" : goal.goal_id,
+            "id" : goal.id,
             "title": goal.title
         }
     }), 200 
 
-    return jsonify({"goal": goal.g_json()}), 200
+    # return jsonify({"goal": goal.g_json()}), 200
 
 
-def validate_goal(goal_id):
+def validate_goal(id):
     try:
-        goal_id = int(goal_id)
+        id = int(id)
     except: 
-        return abort(make_response({"message" : f"goal {goal_id} is invalid"}, 400))
+        return abort(make_response({"message" : f"goal {id} is invalid"}, 400))
     
-    goal = Goal.query.get(goal_id)
+    goal = Goal.query.get(id)
     
     if not goal:
-        abort(make_response({"message": f"goal {goal_id} not found"}, 404))
+        abort(make_response({"message": f"goal {id} not found"}, 404))
     
     return goal
     
 
 
-@goals_bp.route("/<goal_id>", methods=["PUT"])
-def update_goal(goal_id):
-    goal = validate_goal(goal_id)
+@goals_bp.route("/<id>", methods=["PUT"])
+def update_goal(id):
+    goal = validate_goal(id)
     request_body = request.get_json()
 
     goal.title = request_body["title"]
-    goal.description = request_body["description"]
 
+    
     db.session.commit()
 
-    return make_response(jsonify(goal.to_dict()), 200)
+    return jsonify({"goal":goal.g_json()}), 200
 
 
-@goals_bp.route("/<goal_id>", methods=["DELETE"])
-def delete_goal(goal_id):
-    goal = validate_goal(goal_id)
+@goals_bp.route("/<id>", methods=["DELETE"])
+def delete_goal(id):
+    goal = validate_goal(id)
 
     db.session.delete(goal)
     db.session.commit()
 
     return {
-        "details": f'Goal {goal.goal_id} "{goal.title}" successfully deleted'
+        "details": f'Goal {goal.id} "{goal.title}" successfully deleted'
     }
