@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, make_response, abort, abort
 from app.models.goal import Goal
 from app.models.task import Task
+from app.task_routes import validate_task
 from app.routes_helper import *
 from app import db
 # from app.task_routes import validate_model
@@ -106,77 +107,22 @@ def delete_goal(id):
 
 @goals_bp.route("/<id>/tasks", methods=["POST"])
 def create_task_for_goal(id):
-    request_body = request.get_json() #{"task_ids": [1,2,3]}
-    id = validate_goal(id)
+    request_body = request.get_json()
+    goal = validate_goal(id)
+
     task_goal_id_list = []
     tasks_to_connect = request_body["task_ids"]
+    for task_id in tasks_to_connect:
+        task = validate_task(task_id)
+        task.goal_id = goal.id
+        task_goal_id_list.append(task_id)
 
-    for task in tasks_to_connect:
-        Task.query.filter(task).update(goal_id=id)
-        task_goal_id_list.append(Task.query.filter_by(goal_id=id))
+    db.session.commit()
 
     return jsonify({
         "id": task.goal_id,
         "task_ids": task_goal_id_list
         })
-    
-
-
-
-
-
-
-
-
-
-
-
-
-    # id = validate_goal(id)
-    # goal = Goal.query.get(id)
-    # tasks_to_connect = request_body["tasks_list"]
-
-    # for task in tasks_to_connect:
-    #     if not task.goal_id:
-    #         Task.query.filter(task).update(goal_id=goal.id)
-
-    # return jsonify({
-    #     "id": id,
-    #     "task_ids": tasks_to_connect 
-    #     })
-
-
-
-
-
-
-
-
-
-
-
-
-
-#     goal = get_record_by_id(Task, id)
-#     tasks_ids_response = []
-
-#     new_task = Task.from_dict(request_body)
-#     # new_task.goal = goal
-# # new_task = Task(
-# #         title=request_body["title"],
-# #         description=request_body["description"]
-
-
-#     db.session.add(new_task)
-#     db.session.commit()
-    # for task in goal.tasks:
-    #     tasks_ids_response.append(task.id)
-
-    # return jsonify({
-    #     "id": new_task.goal.id,
-    #     # "task_ids": 
-    #     })
-
 
 
 # @goals_bp.route("/goals/<id>/tasks", methods=["GET"])
