@@ -18,15 +18,19 @@ class Task(db.Model):
         task_as_dict["title"] = self.title
         task_as_dict["description"] = self.description
         task_as_dict["is_complete"] = bool(self.is_complete)
-        
+
+        if self.goal_id:
+            task_as_dict["goal_id"] = self.goal_id
         nested_dict = {"task": task_as_dict}
+
         return nested_dict
     
     @classmethod
-    def from_dict(cls, task_data):
-        new_task = Task(title=task_data["title"],
-                        description=task_data["description"])
-        return new_task
+    def from_dict(cls, request_body):
+        return cls(
+            title=request_body["title"],
+            description=request_body["description"])
+            # goal_id=request_body["goal_id"])
 
     def mark_complete(self):
         today = date.today()
