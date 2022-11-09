@@ -88,7 +88,7 @@ def update_goal(goal_id):
 
     db.session.commit()
 
-    return make_response(jsonify(goal.to_dict()), 200)
+    return make_response(jsonify(goal.g_json()), 200)
 
 
 @goals_bp.route("/<goal_id>", methods=["DELETE"])
