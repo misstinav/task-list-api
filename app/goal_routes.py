@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request, make_response, abort, abort
 from app.models.goal import Goal
-# from app.models.task import Task
+from app.models.task import Task
+from app.routes_helper import *
 from app import db
-# from app.task_routes import validate_task
+# from app.task_routes import validate_model
 
 
 goals_bp = Blueprint("goals_bp", __name__, url_prefix="/goals")
@@ -105,11 +106,12 @@ def delete_goal(id):
 
 @goals_bp.route("/<goal_id>/tasks", methods=["POST"])
 def create_task_for_goal(goal_id):
-    goal = validate_goal(goal_id)
+    request_body = request.get_json()
+    goal = get_record_by_id(Goal, goal_id)
     tasks_ids_response = []
 
-    for id in goal.tasks:
-        tasks_ids_response.append(goal.tasks.id)
+    # for task in goal.tasks:
+    #     tasks_ids_response.append(task.id)
 
     return jsonify({
         "id": goal.id,

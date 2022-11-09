@@ -21,6 +21,12 @@ class Task(db.Model):
         
         nested_dict = {"task": task_as_dict}
         return nested_dict
+    
+    @classmethod
+    def from_dict(cls, task_data):
+        new_task = Task(title=task_data["title"],
+                        description=task_data["description"])
+        return new_task
 
     def mark_complete(self):
         today = date.today()
