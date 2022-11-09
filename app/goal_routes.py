@@ -116,7 +116,7 @@ def create_task_for_goal(id):
         task_goal_id_list.append(Task.query.filter_by(goal_id=id))
 
     return jsonify({
-        "id": id,
+        "id": task.goal_id,
         "task_ids": task_goal_id_list
         })
     
