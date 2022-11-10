@@ -28,9 +28,11 @@ class Task(db.Model):
     @classmethod
     def from_dict(cls, request_body):
         return cls(
+            id=request_body["id"],
             title=request_body["title"],
-            description=request_body["description"])
-            # goal_id=request_body["goal_id"])
+            description=request_body["description"],
+            goal_id=request_body["goal_id"],
+            is_complete=request_body["is_complete"])
 
     def mark_complete(self):
         today = date.today()
