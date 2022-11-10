@@ -21,9 +21,8 @@ class Task(db.Model):
 
         if self.goal_id:
             task_as_dict["goal_id"] = self.goal_id
-        nested_dict = {"task": task_as_dict}
 
-        return nested_dict
+        return task_as_dict
     
     @classmethod
     def from_dict(cls, request_body):
@@ -37,7 +36,6 @@ class Task(db.Model):
     def mark_complete(self):
         today = date.today()
         self.completed_at = today
-
         if self.completed_at:
             self.is_complete = True
 

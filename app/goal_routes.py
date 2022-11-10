@@ -1,10 +1,8 @@
 from flask import Blueprint, jsonify, request, make_response, abort, abort
 from app.models.goal import Goal
-from app.models.task import Task
 from app.task_routes import validate_task
 from app.routes_helper import *
 from app import db
-# from app.task_routes import validate_model
 
 
 goals_bp = Blueprint("goals_bp", __name__, url_prefix="/goals")
@@ -24,13 +22,11 @@ def get_all_goals(id):
 def create_goal():
     request_body = request.get_json()
 
-    # guard clause
     if "title" not in request_body:
         return {"details": "Invalid data"}, 400
     new_goal = Goal(
         title=request_body['title']
         )
-    
     db.session.add(new_goal)
     db.session.commit()
     
@@ -54,7 +50,6 @@ def get_goals():
             "id":goal.id,
             "title": goal.title,
         })
-
     return jsonify(goals_response)
 
 @goals_bp.route("/<id>", methods=["GET"])
@@ -75,7 +70,6 @@ def validate_goal(id):
         return abort(make_response({"message" : f"goal {id} is invalid"}, 400))
     
     goal = Goal.query.get(id)
-    
     if not goal:
         abort(make_response({"message": f"goal {id} not found"}, 404))
     
@@ -127,61 +121,12 @@ def create_task_for_goal(id):
 @goals_bp.route("/<id>/tasks", methods=["GET"])
 def get_tasks_with_specific_goal(id):
     goal = validate_goal(id)
+    tasks_list = []
+    for task in goal.tasks:
+        tasks_list.append(task.to_dict())
 
-    
-    return jsonify(goal.to_dict())
-        # {
-        #     "id": goal.id,
-        #     "title": goal.title,
-        #     "tasks": goal.tasks
-        #     })
-
-
-
-    # response_body == {
-    #     "id": 1,
-    #     "title": "Build a habit of going outside daily",
-    #     "tasks": []
-    # }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# @goals_bp.route("/goals/<id>/tasks", methods=["GET"])
-# def read_tasks(goal_id):
-#     goal = validate_goal(Goal, goal_id)
-#     tasks_response = []
-#     # for goal in goal.tasks:
-#     #     tasks_response.append(
-#     #         {
-#     #                 "id": goal.task.id,
-#     #                 "goal_id": goal.task.goal_id,
-#     #                 "title": goal.task.title,
-#     #                 "description": goal.task.description,
-#     #                 "is_complete": goal.task.is_complete
-#     #         }
-#     #     )
-
-#     return jsonify({
-#         "id": goal_id,
-#         "title": goal.title,
-#         "tasks": tasks_response
-#     })
+    return jsonify({
+        "id": goal.id,
+        "title": goal.title,
+        "tasks" : tasks_list
+    })

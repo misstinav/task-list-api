@@ -3,8 +3,7 @@ from app.models.task import Task
 from app import db
 import os
 import requests
-# from pathlib import Path
-# from dotenv import load_dotenv
+
 
 
 
@@ -31,7 +30,10 @@ def create_task():
     db.session.add(new_task)
     db.session.commit()
 
-    return make_response(jsonify(new_task.to_dict()), 201)
+    response = {
+            "task": new_task.to_dict()
+            }
+    return jsonify(response), 201
 
 
 @tasks_bp.route("", methods=["GET"])
@@ -61,14 +63,15 @@ def get_tasks():
 def get_one_task(task_id):
     task = validate_task(task_id)
 
-    return {
-        "task": {
-            "id" : task.id,
-            "title": task.title,
-            "description" : task.description,
-            "is_complete": bool(task.is_complete)
-        }
+    response = {
+        "task": task.to_dict()
     }
+    if task.goal_id == None:
+        pass
+    else:
+        response["task"]["goal_id"] = task.goal_id
+    
+    return response
 
 def validate_task(task_id):
     try:
@@ -80,8 +83,6 @@ def validate_task(task_id):
         abort(make_response({"message": "id number not found"}, 404))
     
     return task
-    
-
 
 @tasks_bp.route("/<task_id>", methods=["PUT"])
 def update_task(task_id):
@@ -93,7 +94,11 @@ def update_task(task_id):
 
     db.session.commit()
 
-    return make_response(jsonify(task.to_dict()), 200)
+    response = {
+        "task": task.to_dict()
+    }
+
+    return jsonify(response)
 
 
 @tasks_bp.route("/<task_id>", methods=["DELETE"])
@@ -120,8 +125,12 @@ def mark_complete_on_incomplete_task(task_id):
     "Authorization": os.environ.get('SLACK_TOKEN')
     }
     requests.post(URL, data=payload, headers=headers)
+    
+    response = {
+        "task": task.to_dict()
+    }
+    return jsonify(response)
 
-    return make_response(jsonify(task.to_dict()), 200)
 
 @tasks_bp.route("/<task_id>/mark_incomplete", methods=["PATCH"])
 def mark_incomplete_oncomplete_task(task_id):
@@ -130,4 +139,7 @@ def mark_incomplete_oncomplete_task(task_id):
     task.mark_incomplete()
     db.session.commit()
 
-    return make_response(jsonify(task.to_dict()), 200)
+    response = {
+        "task": task.to_dict()
+    }
+    return jsonify(response)

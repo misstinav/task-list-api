@@ -50,7 +50,7 @@ def test_get_tasks_for_specific_goal_no_goal(client):
 
     # Assert
     assert response.status_code == 404
-    assert response_body == {"message": "id number not found"}
+    assert response_body == {"message": f"goal 1 not found"}
 
     # raise Exception("Complete test with assertion about response body")
     # *****************************************************************
@@ -100,7 +100,7 @@ def test_get_tasks_for_specific_goal(client, one_task_belongs_to_one_goal):
     }
 
 
-@pytest.mark.skip(reason="No way to test this feature yet")
+# @pytest.mark.skip(reason="No way to test this feature yet")
 def test_get_task_includes_goal_id(client, one_task_belongs_to_one_goal):
     response = client.get("/tasks/1")
     response_body = response.get_json()
