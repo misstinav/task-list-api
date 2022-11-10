@@ -1,4 +1,5 @@
 from app import db
+# from .task import Task
 
 
 class Goal(db.Model):
@@ -11,3 +12,11 @@ class Goal(db.Model):
             "id": self.id,
             "title": self.title
         }
+
+    def to_dict(self):
+        as_dict = {}
+        as_dict["id"] = self.id
+        as_dict["title"] = self.title
+        as_dict["tasks"] = [self.tasks]
+
+        return as_dict

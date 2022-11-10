@@ -127,25 +127,14 @@ def create_task_for_goal(id):
 @goals_bp.route("/<id>/tasks", methods=["GET"])
 def get_tasks_with_specific_goal(id):
     goal = validate_goal(id)
-    request_body = request.get_json()
-    tasks_to_connect = request_body["task_ids"]
-    tasks_response = []
 
-    for task_id in tasks_to_connect:
-        task = validate_task(task_id)
-        tasks_response.append({
-                "id": task_id,
-                "goal_id": goal.id,
-                "title": task.title,
-                "description": task.description,
-                "is_complete": task.is_complete
-            })
     
-    return jsonify({
-            "id": goal.id,
-            "title": goal.title,
-            "tasks": tasks_response
-            })
+    return jsonify(goal.to_dict())
+        # {
+        #     "id": goal.id,
+        #     "title": goal.title,
+        #     "tasks": goal.tasks
+        #     })
 
 
 
